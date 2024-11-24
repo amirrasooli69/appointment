@@ -44,3 +44,14 @@ export class ForgetPasswordDto {
   @IsMobilePhone("fa-IR", {}, {message: InCorrectFormat.Mobile})
   mobile: string;
 }
+export class ChangePasswordDto {
+@ApiProperty()
+@IsJwt({message: "توکن ارسال شده صحیح نمیباشد"})
+token: string;
+@ApiProperty()
+@Length(8, 16, {message: InCorrectFormat.Password})
+  newPassword: string;
+@ApiProperty()
+@Length(8, 16, {message: InCorrectFormat.Password})
+  confirmPassword: string;
+}
