@@ -21,17 +21,25 @@ export class AuthController {
 
     @Post("send-otp")
     @ApiConsumes(FormType.Urlencoded, FormType.Json)
-    sendOtp(@Body() dto: SendOtpDto){}
+    sendOtp(@Body() dto: SendOtpDto){
+        return this.authService.sendOtp(dto)
+    }
 
     @Post("check-otp")
     @ApiConsumes(FormType.Urlencoded, FormType.Json)
-    checkOtp(@Body() dto: CheckOtpDto){}
+    checkOtp(@Body() dto: CheckOtpDto){
+        return this.authService.checkOtp(dto);
+    }
 
     @Post("forget-password")
     @ApiConsumes(FormType.Urlencoded, FormType.Json)
-    forgetPassword(@Body() dto: ForgetPasswordDto){}
+    forgetPassword(@Body() dto: ForgetPasswordDto){
+        return this.authService.forgetPassword(dto)
+    }
 
     @Post("refreshtoken")
     @ApiConsumes(FormType.Urlencoded, FormType.Json)
-    refreshToken(@Body() dto: refreshTokenDto){}
+    refreshToken(@Body() dto: refreshTokenDto){
+        return this.authService.refreshToken(dto)
+    }
 }

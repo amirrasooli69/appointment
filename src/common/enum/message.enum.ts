@@ -13,9 +13,25 @@ export enum ConfilictMessage {
 }
 
 export enum PublicMessage {
-    AccountCreated= "حساب کاربری شما با موفقیت ایجاد شد"
+    AccountCreated= "حساب کاربری شما با موفقیت ایجاد شد",
+    SendLinkForgetPassword= "با لینک زیر میتوانید رمز عبور را عوض کنید"
+
 }
 
 export enum UnauthorizedMessage {
-    IncorrectUserPass = "نام کاربری یا رمز عبور اشتباه است"
+    IncorrectUserPass = "نام کاربری یا رمز عبور اشتباه است",
+    LoginAgain= "دوباره وارد حساب کاربری خود شوید"
+}
+
+export enum NotFoundMessage {
+    AccountNotFound = "حساب کاربری یافت نشد"
+}
+
+export enum OtpMessage {
+    SendOtpCode = "رمز یکبار مصرف ارسال شد",
+    DontExpiredOtpCode= "کد قبلی هنوز منقضی نشده است",
+    ExpiredOtpCode= "کد قبلی منقضی شده است",
+    InCorrectOtpCode= "کد اشتباه است"
+
+
 }
