@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -8,6 +9,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "../user/entity/user.entity";
 import { Repository } from "typeorm";
 import {
+    ChangePasswordDto,
   CheckOtpDto,
   ForgetPasswordDto,
   LoginDto,
@@ -17,13 +19,14 @@ import {
 } from "./dto/auth.dto";
 import { mobileValidation } from "src/common/util/mobile.util";
 import {
+    BadRequestMessage,
   ConfilictMessage,
   NotFoundMessage,
   OtpMessage,
   PublicMessage,
   UnauthorizedMessage,
 } from "src/common/enum/message.enum";
-import { randomPassword } from "src/common/util/password.util";
+import { hashPassword, randomPassword } from "src/common/util/password.util";
 import { isMobilePhone } from "class-validator";
 import { compareSync } from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
@@ -87,6 +90,7 @@ export class AuthService {
       code: otpCode,
     };
   }
+
   async checkOtp(checkOtpDto: CheckOtpDto) {
     const { code, mobile } = checkOtpDto;
     const { phoneNumber } = mobileValidation(mobile);
@@ -108,6 +112,7 @@ export class AuthService {
     if (userId) return this.tokenGenerator(+userId);
     throw new UnauthorizedException(UnauthorizedMessage.LoginAgain);
   }
+
   async forgetPassword(forgetPasswordDto: ForgetPasswordDto) {
     const { mobile } = forgetPasswordDto;
     let user = await this.userRepository.findOneBy({ mobile });
@@ -119,14 +124,34 @@ export class AuthService {
         link
     }
   }
+
+  async changePassword(changePasswordDto: ChangePasswordDto){
+    const {confirmPassword, newPassword, token}= changePasswordDto;
+    const data = this.verifyPasswordToken(token);
+    const user = await this.userRepository.findOneBy({id: data.userId});
+    if(!user) throw new NotFoundException(PublicMessage.InCorrectData)
+    if(user.last_change_password_date){
+        const lastChange = new Date(user.last_change_password_date.getTime() + 1000 * 60 * 60); 
+        if(new Date() < lastChange) throw new BadRequestException(BadRequestMessage.ChangePasswordTime)
+        }
+    if(newPassword !== confirmPassword) throw new BadRequestException(BadRequestMessage.IncorrectRepeatPassword)
+    user.password = hashPassword(newPassword);
+    user.last_change_password_date= new Date();
+    await this.userRepository.save(user);
+    return {
+        message: PublicMessage.Updated
+    }
+  }
+
   forgetPasswordLinkGenerator(user: UserEntity) {
     const token = this.jwtService.sign(
         {userId: user.id, mobile: user.mobile},
-        {secret: ForgetPassword_JWT_SECRET, expiresIn: 1000 * 60}
+        {secret: ForgetPassword_JWT_SECRET, expiresIn: "1m"}
     );
     const link = `http://localhost:3000/auth/changeme?token=${token}`;
     return link;
   }
+
   async tokenGenerator(userId: number) {
     const accessToken = this.jwtService.sign(
       { userId },
@@ -155,6 +180,22 @@ export class AuthService {
       throw new UnauthorizedException(UnauthorizedMessage.LoginAgain);
     } catch (error) {
       throw new UnauthorizedException(UnauthorizedMessage.LoginAgain);
+    }
+  }
+
+  verifyPasswordToken(token: string) {
+    try {
+      const verifyed = this.jwtService.verify(token, {
+        secret: R_JWT_SECRET,
+      });
+      if (verifyed?.userId && !isNaN(parseInt(verifyed?.userId))) {
+        console.log(verifyed );
+        return verifyed;
+      }
+
+      throw new UnauthorizedException(BadRequestMessage.ExpiredLink);
+    } catch (error) {
+      throw new UnauthorizedException(BadRequestMessage.ExpiredLink);
     }
   }
 }

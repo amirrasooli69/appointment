@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsJWT, IsMobilePhone, Length, Matches } from "class-validator";
-import { InCorrectFormat } from "src/common/enum/message.enum";
+import { InCorrectFormat, OtpMessage } from "src/common/enum/message.enum";
 
 export class SignupDto {
   @ApiProperty()
@@ -46,7 +46,7 @@ export class ForgetPasswordDto {
 }
 export class ChangePasswordDto {
 @ApiProperty()
-@IsJwt({message: "توکن ارسال شده صحیح نمیباشد"})
+@IsJWT({message: OtpMessage.InCorrectToken})
 token: string;
 @ApiProperty()
 @Length(8, 16, {message: InCorrectFormat.Password})
