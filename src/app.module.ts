@@ -11,7 +11,8 @@ import { AuthModule } from "./modules/auth/auth.module";
       port: 3306,
       database: "appointment",
       username: "root",
-      password: "",
+      // password: "" 
+      password: "aammiirr", //daftar
       synchronize: true,
       entities: ["dist/**/**/**/*.entity{.ts,.js}"]
     }),

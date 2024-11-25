@@ -186,10 +186,10 @@ export class AuthService {
   verifyPasswordToken(token: string) {
     try {
       const verifyed = this.jwtService.verify(token, {
-        secret: R_JWT_SECRET,
+        secret: ForgetPassword_JWT_SECRET,
       });
       if (verifyed?.userId && !isNaN(parseInt(verifyed?.userId))) {
-        console.log(verifyed );
+        
         return verifyed;
       }
 

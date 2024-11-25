@@ -46,6 +46,7 @@ export class AuthController {
     @Post("changeme")
     @ApiConsumes(FormType.Mulipart, FormType.Json)
     changePassword(@Body() dto: ChangePasswordDto){
+        return {message: "test"}
         return this.authService.changePassword(dto)
     }
 }
