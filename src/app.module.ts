@@ -2,6 +2,8 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UserModule } from "./modules/user/user.module";
 import { AuthModule } from "./modules/auth/auth.module";
+import { ClinicModule } from "./modules/clinic/clinic.module";
+import { CategoryModule } from "./modules/category/category.module";
 
 @Module({
   imports: [
@@ -11,13 +13,15 @@ import { AuthModule } from "./modules/auth/auth.module";
       port: 3306,
       database: "appointment",
       username: "root",
-      // password: "" 
-      password: "aammiirr", //daftar
+      password: "",
+      // password: "aammiirr", //daftar
       synchronize: true,
       entities: ["dist/**/**/**/*.entity{.ts,.js}"]
     }),
     UserModule,
-    AuthModule
+    AuthModule,
+    ClinicModule,
+    CategoryModule
   ],
   controllers: [],
   providers: [],

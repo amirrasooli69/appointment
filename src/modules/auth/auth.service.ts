@@ -185,17 +185,19 @@ export class AuthService {
 
   verifyPasswordToken(token: string) {
     try {
-      const verifyed = this.jwtService.verify(token, {
+      const verified = this.jwtService.verify(token, {
         secret: ForgetPassword_JWT_SECRET,
       });
-      if (verifyed?.userId && !isNaN(parseInt(verifyed?.userId))) {
+      console.log("object");
+      if (verified?.userId && !isNaN(parseInt(verified?.userId))) {
         
-        return verifyed;
+        return verified;
       }
 
-      throw new UnauthorizedException(BadRequestMessage.ExpiredLink);
+      throw new UnauthorizedException("monghazi");
     } catch (error) {
-      throw new UnauthorizedException(BadRequestMessage.ExpiredLink);
+      throw new UnauthorizedException("monghazi 2");
+      
     }
   }
 }
