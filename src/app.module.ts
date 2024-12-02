@@ -20,8 +20,8 @@ import { CategoryModule } from "./modules/category/category.module";
     }),
     UserModule,
     AuthModule,
+    CategoryModule,
     ClinicModule,
-    CategoryModule
   ],
   controllers: [],
   providers: [],

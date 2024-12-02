@@ -4,10 +4,10 @@ import { CategoryEntity } from "./entity/category.entity";
 import { CategoryController } from "./category.controller";
 import { CategoryService } from "./category.service";
 
-Module({
+@Module({
     imports: [TypeOrmModule.forFeature([CategoryEntity])],
+    providers: [CategoryService],
     controllers: [CategoryController],
-    providers: [CategoryService]
 })
 
 export class CategoryModule {}

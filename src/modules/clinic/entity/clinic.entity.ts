@@ -1,7 +1,8 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { LocationType } from "../enum/type.enum";
 import { CategoryEntity } from "src/modules/category/entity/category.entity";
 import { ClinicDoctorEntity } from "./doctors.entity";
+import { ClinicDetailEntity } from "./detail.entity";
 
 @Entity("clinic")
 export class ClinicEntity {
@@ -11,6 +12,10 @@ export class ClinicEntity {
     categoryId: number;
     @Column()
     name: string;
+    @Column({unique: true})
+    slug: string;
+    @Column({nullable: true, unique: true})
+    detailId: number;
     @Column()
     manager_name: string;
     @Column()
@@ -21,4 +26,7 @@ export class ClinicEntity {
     category: CategoryEntity;
     @ManyToOne(()=> ClinicDoctorEntity, doctor => doctor.clinic)
     doctors: ClinicDoctorEntity[]
+    @OneToOne(()=> ClinicDetailEntity, detail=> detail.clinic)
+    @JoinColumn()
+    detail: ClinicDetailEntity;
 }

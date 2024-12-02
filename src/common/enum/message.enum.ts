@@ -9,14 +9,17 @@ export enum InCorrectFormat {
 }
 
 export enum ConfilictMessage {
-    mobile= "این شماره موبایل قبلا ثبت شده است"
+    mobile= "این شماره موبایل تکراری است",
+    telephone= "این شماره تلفن تکراری است"
 }
 
 export enum PublicMessage {
     AccountCreated= "حساب کاربری شما با موفقیت ایجاد شد",
     SendLinkForgetPassword= "با لینک زیر میتوانید رمز عبور را عوض کنید",
     InCorrectData= "اطلاعات وارد شده صحیح نمیباشد",
-    Updated= "به روز رسانی با موفقیت انجام شد"
+    Updated= "به روز رسانی با موفقیت انجام شد",
+    Created= "با موفقیت ایجاد شد",
+    Deleted= "با موفقیت حذف شد"
 }
 
 export enum UnauthorizedMessage {
@@ -25,7 +28,8 @@ export enum UnauthorizedMessage {
 }
 
 export enum NotFoundMessage {
-    AccountNotFound = "حساب کاربری یافت نشد"
+    AccountNotFound = "حساب کاربری یافت نشد",
+    NotFound = "موردی پیدا نشد",
 }
 
 export enum OtpMessage {
@@ -39,5 +43,8 @@ export enum OtpMessage {
 export enum BadRequestMessage {
     IncorrectRepeatPassword= "رمز عبور با تکرار آن برابر نیست",
     ChangePasswordTime= "هر یک ساعت امکان عوض کرد رمز را دارید",
-    ExpiredLink= "لینک مورد نظر منقضی شده"
+    ExpiredLink= "لینک مورد نظر منقضی شده",
+    InCorrectPhoneNumber= "تلفن وارد شده صحیح نمیباشد",
+    InCorrectMobileNumber= "شماره موبایل وارد شده صحیح نمیباشد",
+    InCorrectTypeOffice= "نوع ملک را به درستی انتخاب کنید"
 }

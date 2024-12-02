@@ -6,6 +6,8 @@ import { ClinicDoctorEntity } from "./entity/doctors.entity";
 import { ClinicDetailEntity } from "./entity/detail.entity";
 import { ClinicService } from "./clinic.service";
 import { ClinicController } from "./clinic.controller";
+import { CategoryService } from "../category/category.service";
+import { CategoryEntity } from "../category/entity/category.entity";
 
 @Module({
   imports: [
@@ -14,9 +16,10 @@ import { ClinicController } from "./clinic.controller";
       ClinicDocumentEntity,
       ClinicDoctorEntity,
       ClinicDetailEntity,
+      CategoryEntity
     ]),
   ],
   controllers: [ClinicController],
-  providers: [ClinicService],
+  providers: [ClinicService, CategoryService],
 })
 export class ClinicModule {}

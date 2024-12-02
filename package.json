@@ -14,6 +14,7 @@
     "start:prod": "node dist/main"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.703.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/jwt": "^10.2.0",
@@ -28,6 +29,7 @@
     "mysql2": "^3.11.4",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
+    "slugify": "^1.6.6",
     "swagger-ui-express": "^5.0.1",
     "typeorm": "^0.3.20"
   },
