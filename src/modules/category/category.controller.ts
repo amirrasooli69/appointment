@@ -12,7 +12,6 @@ constructor(private categoryService: CategoryService){}
     @Post("/")
     @ApiCreatedResponse({example: {message: "created"}})
     @ApiOperation({summary: "create category"}) // detail for backend developer
-
     @ApiConsumes(FormType.Urlencoded, FormType.Json)
     create(@Body() dto: CreateCategoryDto) {
       return this.categoryService.create(dto);

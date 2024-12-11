@@ -7,51 +7,56 @@ import { NotFoundMessage, PublicMessage } from "src/common/enum/message.enum";
 
 @Injectable()
 export class CategoryService {
-constructor(@InjectRepository(CategoryEntity) private categoryRepository: Repository<CategoryEntity>){}
-    async create(dto: CreateCategoryDto) {
-        const {title, description, slug}= dto;
-        await this.categoryRepository.insert({
-            title, description, slug
-        })
+  constructor(
+    @InjectRepository(CategoryEntity)
+    private categoryRepository: Repository<CategoryEntity>
+  ) {}
 
-        return {
-            message: PublicMessage.Created
-        }
-    }
+  async create(dto: CreateCategoryDto) {
+    const { title, description, slug } = dto;
+    await this.categoryRepository.insert({
+      title,
+      description,
+      slug,
+    });
 
-    async findAll() {
-        return this.categoryRepository.findBy({})
-    }
+    return {
+      message: PublicMessage.Created,
+    };
+  }
 
-    async findOne(id: number) {
-        const category = await this.categoryRepository.findOneBy({id})
-        if(!category) throw new NotFoundException(NotFoundMessage.NotFound)
-        return category
-    }
+  async findAll() {
+    return this.categoryRepository.findBy({});
+  }
 
-    async delete(id: number) {
-        const category = await this.findOne(id)
-        if(!category) throw new NotFoundException(NotFoundMessage.NotFound)
-        await this.categoryRepository.remove(category)
-        return {
-            message: PublicMessage.Deleted
-        }
-    }
+  async findOne(id: number) {
+    const category = await this.categoryRepository.findOneBy({ id });
+    if (!category) throw new NotFoundException(NotFoundMessage.NotFound);
+    return category;
+  }
 
-    async update(id: number, dto: UpdateCategoryDto) {
-        const {title, description, slug}= dto;
-        const category = await this.categoryRepository.findOneBy({id})
-        if(!category) throw new NotFoundException(NotFoundMessage.NotFound)
-        
-        if(title) category.title = title;
-        if(description) category.description = description;
-        if(slug) category.slug = slug;
- 
-        await this.categoryRepository.save(category)
+  async delete(id: number) {
+    const category = await this.findOne(id);
+    if (!category) throw new NotFoundException(NotFoundMessage.NotFound);
+    await this.categoryRepository.remove(category);
+    return {
+      message: PublicMessage.Deleted,
+    };
+  }
 
-        return {
-            message: PublicMessage.Updated
-        }
-    }
+  async update(id: number, dto: UpdateCategoryDto) {
+    const { title, description, slug } = dto;
+    const category = await this.categoryRepository.findOneBy({ id });
+    if (!category) throw new NotFoundException(NotFoundMessage.NotFound);
 
+    if (title) category.title = title;
+    if (description) category.description = description;
+    if (slug) category.slug = slug;
+
+    await this.categoryRepository.save(category);
+
+    return {
+      message: PublicMessage.Updated,
+    };
+  } 
 }
