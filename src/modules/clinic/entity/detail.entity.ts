@@ -7,13 +7,13 @@ export class ClinicDetailEntity {
   id: number;
   @Column({unique: true})
   clinicId: number;
-  @Column()
+  @Column({default: 1})
   province: string;
-  @Column()
+  @Column({default: 1})
   city: string;
   @Column()
   address: string;
-  @Column()
+  @Column({default: 12345678912})
   tel_1: string;
   @Column({nullable: true})
   tel_2: string;

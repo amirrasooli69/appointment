@@ -3,6 +3,8 @@ import { LocationType } from "../enum/type.enum";
 import { CategoryEntity } from "src/modules/category/entity/category.entity";
 import { ClinicDoctorEntity } from "./doctors.entity";
 import { ClinicDetailEntity } from "./detail.entity";
+import { ClinicDocumentEntity } from "./document.entity";
+import { ClinicStatus } from "../enum/status.enum";
 
 @Entity("clinic")
 export class ClinicEntity {
@@ -14,8 +16,12 @@ export class ClinicEntity {
     name: string;
     @Column({unique: true})
     slug: string;
+    @Column({type: "enum", enum: ClinicStatus, default: ClinicStatus.Pending})
+    status: string;
     @Column({nullable: true, unique: true})
     detailId: number;
+    @Column({nullable: true, unique: true})
+    documentsId: number;
     @Column()
     manager_name: string;
     @Column()
@@ -29,4 +35,7 @@ export class ClinicEntity {
     @OneToOne(()=> ClinicDetailEntity, detail=> detail.clinic)
     @JoinColumn()
     detail: ClinicDetailEntity;
+    @OneToOne(()=> ClinicDocumentEntity, doc => doc.clinic)
+    @JoinColumn()
+    documents: ClinicDocumentEntity
 }

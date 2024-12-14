@@ -15,12 +15,12 @@ export class CreateClinicDto {
   @IsMobilePhone("fa-IR", {}, {message: BadRequestMessage.InCorrectMobileNumber})
   manager_mobile: string;
   @ApiProperty()
-  @IsNotEmpty({message: "استان نمیتواند خالی باشد"})
-  @IsNumber()
+  // @IsNumber()
+  @IsNotEmpty({message: "استان نمیتواند خالی  ارسال شود"})
   province: number;
   @ApiProperty()
-  @IsNotEmpty({message: "شهر نمیتواند خالی باشد"})
-  @IsNumber()
+  // @IsNumber()
+  @IsNotEmpty({message: "شهر نمیتواند خالی  ارسال شود"})
   city: number;
   @ApiProperty()
   address: string;
