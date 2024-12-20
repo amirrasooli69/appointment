@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { LocationType } from "../enum/type.enum";
 import { CategoryEntity } from "src/modules/category/entity/category.entity";
 import { ClinicDoctorEntity } from "./doctors.entity";
@@ -38,4 +38,6 @@ export class ClinicEntity {
     @OneToOne(()=> ClinicDocumentEntity, doc => doc.clinic)
     @JoinColumn()
     documents: ClinicDocumentEntity
+    @CreateDateColumn()
+    created_at: Date;
 }

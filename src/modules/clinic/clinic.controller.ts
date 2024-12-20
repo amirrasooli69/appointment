@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UploadedFiles, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Get, Post, UploadedFiles, UseInterceptors } from "@nestjs/common";
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { ClinicService } from "./clinic.service";
 import { CreateClinicDto } from "./dto/clinic.dto";
@@ -16,5 +16,10 @@ export class ClinicController {
     @UseInterceptors(AnyFilesInterceptor({storage: memoryStorage()}))
     register(@Body() dto: CreateClinicDto, @UploadedFiles() files: any){
         return this.clinicService.register(dto, files)
+    }
+
+    @Get("/")
+    async getAll(){
+        return this.clinicService.find()
     }
 }
