@@ -13,8 +13,8 @@ import { CategoryModule } from "./modules/category/category.module";
       port: 3306,
       database: "appointment",
       username: "root",
-      // password: "",
-      password: "aammiirr", //daftar
+      password: "",
+      // password: "aammiirr", //daftar
       synchronize: true,
       entities: ["dist/**/**/**/*.entity{.ts,.js}"]
     }),
