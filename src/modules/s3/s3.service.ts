@@ -32,7 +32,8 @@ export class S3Service {
             Key,
         })
         return {
-            Location: `https://${S3EndPoint}/${Key}`
+            Location: `https://${S3EndPoint}/${Key}`,
+            Key
         }
     }
 }

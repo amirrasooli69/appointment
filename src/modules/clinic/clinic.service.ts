@@ -22,20 +22,88 @@ export class ClinicService {
   private categoryService: CategoryService,
   private s3Service: S3Service
 ) {}
-  async register(dto: CreateClinicDto, files: Express.Multer.File[]){
-    const {manager_name, name, manager_mobile, province, city, address, categoryId, tel_1, license, location_type}= dto;
+  // async register(dto: CreateClinicDto, files: Express.Multer.File[]){
+  //   const {manager_name, name, manager_mobile, province, city, address, categoryId, tel_1, license, location_type}= dto;
+  //   await this.checkMobile(manager_mobile);
+  //   await this.checkTelephone(tel_1);
+  //   const category = await this.categoryService.findOne(categoryId)
+  //   const {cityName, provinceName}= getCityAndProvinceNameByCode(province, city)
+  //   const slug = slugify(name)
+  //   await this.checkSlug(slug)
+  //   let filesObject: {[key: string]: {Location: string, Key: string}} = {}
+  //   for (const file of files) {
+  //     filesObject[file.fieldname] = await this.s3Service.uploadFile(
+  //       file,
+  //       "clinic"
+  //     );
+  //   }
+  //   let clinic = this.clinicRepository.create({
+  //     name,
+  //     slug,
+  //     manager_mobile,
+  //     manager_name,
+  //     categoryId: category.id,
+  //     location_type
+  //   })
+
+  //   let documet = this.documentRepository.create({
+  //     clinic_image_1: filesObject?.["clinic_image_1"]?.Location,
+  //     clinic_image_2: filesObject?.["clinic_image_2"]?.Location,
+  //     license: filesObject?.["license"]?.Location,
+  //     rent_agreement: filesObject?.["rent_agreement"]?.Location,
+  //     side_image: filesObject?.["side_image"]?.Location,
+  //     front_image: filesObject?.["front_image"]?.Location,
+  //     clinicId: clinic.id
+  //   })
+  //   documet = await this.documentRepository.save(documet)
+  //   clinic.documentsId = documet.id
+  //   let detail = this.detailRepository.create({
+  //     city: cityName,
+  //     province: provinceName,
+  //     address,
+  //     clinicId: clinic.id,
+  //   })
+    
+  //   detail = await this.detailRepository.save(detail);
+  //   clinic.detailId = detail.id;
+  //   await this.clinicRepository.save(clinic);
+  //   clinic = await this.clinicRepository.save(clinic)
+
+  //   return {
+  //     message: PublicMessage.Created + " منتظر تایید حساب خود باشید"
+  //   }
+  // }
+
+  async register(dto: CreateClinicDto, files: Express.Multer.File[]) {
+    const {
+      manager_name,
+      name,
+      manager_mobile,
+      tel_1,
+      location_type,
+      province,
+      city,
+      address,
+      categoryId,
+    } = dto;
     await this.checkMobile(manager_mobile);
     await this.checkTelephone(tel_1);
-    const category = await this.categoryService.findOne(categoryId)
-    const {cityName, provinceName}= getCityAndProvinceNameByCode(province, city)
-    const slug = slugify(name)
-    await this.checkSlug(slug)
-    let filesObject: {[key: string]: {Location: string, Key: string}} = {}
+    const category = await this.categoryService.findOne(categoryId);
+    const {provinceName, cityName} = getCityAndProvinceNameByCode(
+      province,
+      city
+    );
+    const slug = slugify(name);
+    console.log(slug);
+
+    await this.checkSlug(slug);
+    let filesObject: {[key: string]: {Location: string; Key: string}} = {};
     for (const file of files) {
       filesObject[file.fieldname] = await this.s3Service.uploadFile(
         file,
         "clinic"
       );
+      console.log(filesObject[file.fieldname]);
     }
     let clinic = this.clinicRepository.create({
       name,
@@ -43,35 +111,33 @@ export class ClinicService {
       manager_mobile,
       manager_name,
       categoryId: category.id,
-      location_type
-    })
-
-    let documet = this.documentRepository.create({
+      location_type,
+    });
+    clinic = await this.clinicRepository.save(clinic);
+    let detail = this.detailRepository.create({
+      tel_1,
+      city: cityName,
+      province: provinceName,
+      address,
+      clinicId: clinic.id,
+    });
+    detail = await this.detailRepository.save(detail);
+    clinic.detailId = detail.id;
+    let document = this.documentRepository.create({
       clinic_image_1: filesObject?.["clinic_image_1"]?.Location,
       clinic_image_2: filesObject?.["clinic_image_2"]?.Location,
       license: filesObject?.["license"]?.Location,
       rent_agreement: filesObject?.["rent_agreement"]?.Location,
       side_image: filesObject?.["side_image"]?.Location,
       front_image: filesObject?.["front_image"]?.Location,
-      clinicId: clinic.id
-    })
-    documet = await this.documentRepository.save(documet)
-    clinic.documentsId = documet.id
-    let detail = this.detailRepository.create({
-      city: cityName,
-      province: provinceName,
-      address,
       clinicId: clinic.id,
-    })
-    
-    detail = await this.detailRepository.save(detail);
-    clinic.detailId = detail.id;
-    await this.clinicRepository.save(clinic);
-    clinic = await this.clinicRepository.save(clinic)
-
+    });
+    document = await this.documentRepository.save(document);
+    clinic.documentsId = document.id;
+    clinic = await this.clinicRepository.save(clinic);
     return {
-      message: PublicMessage.Created + " منتظر تایید حساب خود باشید"
-    }
+      message: "ثبت نام شما با موفقیت انجام شد منتظر تایید حساب خود باشید",
+    };
   }
 
   async checkTelephone(phone: string){
