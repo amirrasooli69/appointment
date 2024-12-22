@@ -13,7 +13,7 @@ import { getCityAndProvinceNameByCode } from "src/common/util/city.util";
 import slugify from "slugify";
 import { S3Service } from "../s3/s3.service";
 import { PaginationDto } from "src/common/dto/pagination.dto";
-import { paginationSolver } from "src/common/util/pagination.util";
+import { paginationGenerator, paginationSolver } from "src/common/util/pagination.util";
 import { ClinicStatus } from "./enum/status.enum";
 import { ClinicFilterDto } from "./dto/filter.dto";
 
@@ -148,11 +148,15 @@ export class ClinicService {
     }
 
 
-    const clinics = await this.clinicRepository.find({
+    const [clinics, count] = await this.clinicRepository.findAndCount({
       where,
       skip,
       take: limit,
       order: { created_at: "DESC" },
     });
+    return {
+      pagination: paginationGenerator(page, limit, count),
+      clinics
+    }
   }
 }

@@ -1,10 +1,12 @@
-import { Body, Controller, Get, Post, UploadedFiles, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query, UploadedFiles, UseInterceptors } from "@nestjs/common";
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { ClinicService } from "./clinic.service";
 import { CreateClinicDto } from "./dto/clinic.dto";
 import { FormType } from "src/common/enum/formtype.enum";
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { memoryStorage } from "multer";
+import { Pagination } from "src/common/decorators/pagination.decorator";
+import { PaginationDto } from "src/common/dto/pagination.dto";
 
 @Controller("clinic")
 @ApiTags("clinic")
@@ -19,7 +21,8 @@ export class ClinicController {
     }
 
     @Get("/")
-    async getAll(){
+    @Pagination()
+    async getAll(@Query() paginationDto: PaginationDto, @Query() filterDto: PaginationDto){
         return this.clinicService.find()
     }
 }

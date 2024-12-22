@@ -12,3 +12,13 @@ export function paginationSolver(paginationDto: PaginationDto){
         skip: page * limit,
     }
 }
+
+export const paginationGenerator= (page: number, limit: number, count: number)=> {
+    const skip = page * limit;
+    return {
+        skip,
+        page,
+        limit,
+        total_count: count
+    }
+}
