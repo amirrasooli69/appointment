@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from "@nestjs/common";
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ClinicEntity } from "./entity/clinic.entity";
 import { FindOptionsWhere, ILike, LessThanOrEqual, MoreThanOrEqual, Repository } from "typeorm";
@@ -6,7 +6,7 @@ import { ClinicDetailEntity } from "./entity/detail.entity";
 import { ClinicDoctorEntity } from "./entity/doctors.entity";
 import { ClinicDocumentEntity } from "./entity/document.entity";
 import { CreateClinicDto } from "./dto/clinic.dto";
-import { ConfilictMessage, PublicMessage } from "src/common/enum/message.enum";
+import { ConfilictMessage, NotFoundMessage, PublicMessage } from "src/common/enum/message.enum";
 import { isDate, isEnum, isMobilePhone, isPhoneNumber } from "class-validator";
 import { CategoryService } from "../category/category.service";
 import { getCityAndProvinceNameByCode } from "src/common/util/city.util";
@@ -158,5 +158,38 @@ export class ClinicService {
       pagination: paginationGenerator(page, limit, count),
       clinics
     }
+  }
+
+  async findOne(id: number){
+    const clinic = await this.clinicRepository.findOneBy({id});
+    if(!clinic) throw new NotFoundException(NotFoundMessage.NotFound)
+      return clinic;
+  }
+
+  async accept(id: number){
+    const clinic = await this.findOne(id);
+    if(clinic.status == ClinicStatus.Confirmed) throw new BadRequestException("کلینیک قبلا تایید شده ")
+    clinic.status = ClinicStatus.Confirmed;
+    clinic.accepted_at = new Date();
+    clinic.reason = null;
+    clinic.rejected_at = null;
+    await this.clinicRepository.save(clinic);
+    return {
+      message: "کلنیک تایید شد"
+    }
+  }
+
+  async reject(id: number, reason: string){
+    const clinic = await this.findOne(id);
+    if(clinic.status == ClinicStatus.Rejected) throw new BadRequestException("کلینیک قبلا رد شده")
+    if(clinic.status == ClinicStatus.Confirmed) throw new BadRequestException("کلینیک قبلا تایید شده و امکان رد آن نیست")
+    clinic.status = ClinicStatus.Rejected;
+  clinic.reason = reason;
+  clinic.rejected_at = new Date();
+  clinic.accepted_at= null;
+  await this.clinicRepository.save(clinic)
+  return {
+    message: "رد کلینیک انجام شد"
+  }
   }
 }

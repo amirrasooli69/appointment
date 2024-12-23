@@ -18,6 +18,12 @@ export class ClinicEntity {
     slug: string;
     @Column({type: "enum", enum: ClinicStatus, default: ClinicStatus.Pending})
     status: string;
+    @Column({nullable: true})
+    reason: string;
+    @Column({nullable: true})
+    accepted_at: Date;
+    @Column({nullable: true})
+    rejected_at: Date;
     @Column({nullable: true, unique: true})
     detailId: number;
     @Column({nullable: true, unique: true})

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UploadedFiles, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, Query, UploadedFiles, UseInterceptors } from "@nestjs/common";
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { ClinicService } from "./clinic.service";
 import { CreateClinicDto } from "./dto/clinic.dto";
@@ -7,6 +7,9 @@ import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { memoryStorage } from "multer";
 import { Pagination } from "src/common/decorators/pagination.decorator";
 import { PaginationDto } from "src/common/dto/pagination.dto";
+import { ClinicFilter } from "./decorators/filter.decorator";
+import { ClinicFilterDto } from "./dto/filter.dto";
+import { RejectDto } from "./dto/reject.dto";
 
 @Controller("clinic")
 @ApiTags("clinic")
@@ -22,7 +25,18 @@ export class ClinicController {
 
     @Get("/")
     @Pagination()
-    async getAll(@Query() paginationDto: PaginationDto, @Query() filterDto: PaginationDto){
-        return this.clinicService.find()
+    @ClinicFilter()
+    async getAll(@Query() paginationDto: PaginationDto, @Query() filterDto: ClinicFilterDto){
+        return this.clinicService.find(paginationDto, filterDto)
+    }
+
+    @Put("/accept/:id")
+    accept(@Param("id", ParseIntPipe) id: number){
+        return this.clinicService.accept(id);
+    }
+
+    @Put("/reject/:id")
+    reject(@Param("id", ParseIntPipe) id: number, {reason}: RejectDto){
+        return this.clinicService.reject(id, reason)
     }
 }
