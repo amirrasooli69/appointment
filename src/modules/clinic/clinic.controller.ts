@@ -36,7 +36,8 @@ export class ClinicController {
     }
 
     @Put("/reject/:id")
-    reject(@Param("id", ParseIntPipe) id: number, {reason}: RejectDto){
+    @ApiConsumes(FormType.Json, FormType.Urlencoded)
+    reject(@Param("id", ParseIntPipe) id: number, @Query(){reason}: RejectDto){
         return this.clinicService.reject(id, reason)
     }
 }

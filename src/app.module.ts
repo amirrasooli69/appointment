@@ -14,7 +14,7 @@ import { CategoryModule } from "./modules/category/category.module";
       database: "appointment",
       username: "root",
       // password: "",
-      password: "aammiirr", //daftar
+      password: "aammiirr", 
       synchronize: true,
       entities: ["dist/**/**/**/*.entity{.ts,.js}"]
     }),

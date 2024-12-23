@@ -16,6 +16,7 @@ import { PaginationDto } from "src/common/dto/pagination.dto";
 import { paginationGenerator, paginationSolver } from "src/common/util/pagination.util";
 import { ClinicStatus } from "./enum/status.enum";
 import { ClinicFilterDto } from "./dto/filter.dto";
+import { RejectDto } from "./dto/reject.dto";
 
 @Injectable()
 export class ClinicService {
