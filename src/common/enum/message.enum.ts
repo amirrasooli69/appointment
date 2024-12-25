@@ -10,7 +10,8 @@ export enum InCorrectFormat {
 
 export enum ConfilictMessage {
     mobile= "این شماره موبایل تکراری است",
-    telephone= "این شماره تلفن تکراری است"
+    telephone= "این شماره تلفن تکراری است",
+    doctor= "کد نظام پزشکی تکراری میباشد"
 }
 
 export enum PublicMessage {
@@ -31,6 +32,7 @@ export enum UnauthorizedMessage {
 export enum NotFoundMessage {
     AccountNotFound = "حساب کاربری یافت نشد",
     NotFound = "موردی پیدا نشد",
+    NotFoundClinic= "حساب کلینیک یافت نشد"
 }
 
 export enum OtpMessage {
@@ -48,4 +50,8 @@ export enum BadRequestMessage {
     InCorrectPhoneNumber= "تلفن وارد شده صحیح نمیباشد",
     InCorrectMobileNumber= "شماره موبایل وارد شده صحیح نمیباشد",
     InCorrectTypeOffice= "نوع ملک را به درستی انتخاب کنید"
+}
+
+export enum ForbiddenMessage {
+    ClinicRejected= "حساب کاربری کلینیک شما رد شده است"
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ClinicEntity } from "./entity/clinic.entity";
 import { FindOptionsWhere, ILike, LessThanOrEqual, MoreThanOrEqual, Repository } from "typeorm";
@@ -6,7 +6,7 @@ import { ClinicDetailEntity } from "./entity/detail.entity";
 import { ClinicDoctorEntity } from "./entity/doctors.entity";
 import { ClinicDocumentEntity } from "./entity/document.entity";
 import { CreateClinicDto } from "./dto/clinic.dto";
-import { ConfilictMessage, NotFoundMessage, PublicMessage } from "src/common/enum/message.enum";
+import { ConfilictMessage, ForbiddenMessage, NotFoundMessage, PublicMessage } from "src/common/enum/message.enum";
 import { isDate, isEnum, isMobilePhone, isPhoneNumber } from "class-validator";
 import { CategoryService } from "../category/category.service";
 import { getCityAndProvinceNameByCode } from "src/common/util/city.util";
@@ -17,6 +17,7 @@ import { paginationGenerator, paginationSolver } from "src/common/util/paginatio
 import { ClinicStatus } from "./enum/status.enum";
 import { ClinicFilterDto } from "./dto/filter.dto";
 import { RejectDto } from "./dto/reject.dto";
+import { CreateDoctorDto } from "./dto/doctor.dto";
 
 @Injectable()
 export class ClinicService {
@@ -192,5 +193,28 @@ export class ClinicService {
   return {
     message: "رد کلینیک انجام شد"
   }
+  }
+
+  async findOneById(id: number){
+    const clinic = await this.clinicRepository.findOneBy({id});
+    if(!clinic) throw new  NotFoundException(NotFoundMessage.NotFoundClinic)
+    if(clinic.status !== ClinicStatus.Confirmed) {
+      throw new ForbiddenException(ForbiddenMessage.ClinicRejected)
+    }
+    return clinic;
+  }
+
+  async createDoctor(doctorDto: CreateDoctorDto, image: Express.Multer.File){
+    const {degree, experience, firstname, lastname, majors, medical_code}= doctorDto;
+    const doctor = await this.doctorRepository.findOneBy({medical_code});
+    if(doctor) throw new ConflictException(ConfilictMessage.doctor)
+    const newDoctor = this.doctorRepository.create({
+  degree, experience, firstname, lastname, majors, medical_code})
+  if(image) {
+    const {Location}= await this.s3Service.uploadFile(image, "clinic/doctor")
+  }
+  newDoctor.image = Location;
+
+  await this.doctorRepository.save(newDoctor)
   }
 }

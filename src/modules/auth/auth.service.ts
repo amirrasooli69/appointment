@@ -30,7 +30,7 @@ import { hashPassword, randomPassword } from "src/common/util/password.util";
 import { isMobilePhone } from "class-validator";
 import { compareSync } from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
-import { A_JWT_SECRET, ForgetPassword_JWT_SECRET, R_JWT_SECRET } from "src/common/constant/jwt.const";
+import { A_JWT_SECRET, Clinic_JWT_SECRET, ForgetPassword_JWT_SECRET, R_JWT_SECRET } from "src/common/constant/jwt.const";
 import { randomInt } from "crypto";
 
 @Injectable()
@@ -188,7 +188,7 @@ export class AuthService {
       const verified = this.jwtService.verify(token, {
         secret: ForgetPassword_JWT_SECRET,
       });
-      console.log("object");
+      // console.log("object");
       if (verified?.userId && !isNaN(parseInt(verified?.userId))) {
         
         return verified;
@@ -200,4 +200,23 @@ export class AuthService {
       
     }
   }
+
+  verifyClinicAccessToken(token: string){
+    try {
+      const verified = this.jwtService.verify(token, {
+        secret: Clinic_JWT_SECRET
+      })
+      if(verified?.clinicId && !isNaN(parseInt(verified?.clinicId))){
+        return verified
+      }
+
+      throw new UnauthorizedException(UnauthorizedMessage.LoginAgain);
+      
+    } catch (error) {
+      throw new UnauthorizedException(UnauthorizedMessage.LoginAgain);
+
+    }
+  }
 }
+
+
