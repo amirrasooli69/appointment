@@ -24,7 +24,8 @@ export enum PublicMessage {
 
 export enum UnauthorizedMessage {
     IncorrectUserPass = "نام کاربری یا رمز عبور اشتباه است",
-    LoginAgain= "دوباره وارد حساب کاربری خود شوید"
+    LoginAgain= "دوباره وارد حساب کاربری خود شوید",
+    Login= "وارد حساب کاربری شوید"
 }
 
 export enum NotFoundMessage {
