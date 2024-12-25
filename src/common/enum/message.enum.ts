@@ -38,7 +38,7 @@ export enum NotFoundMessage {
 export enum OtpMessage {
     SendOtpCode = "رمز یکبار مصرف ارسال شد",
     DontExpiredOtpCode= "کد قبلی هنوز منقضی نشده است",
-    ExpiredOtpCode= "کد قبلی منقضی شده است",
+    ExpiredOtpCode= "کد ارسالی منقضی شده است",
     InCorrectOtpCode= "کد اشتباه است",
     InCorrectToken= "توکن ارسال شده صحیح نمیباشد"
 }
@@ -49,7 +49,8 @@ export enum BadRequestMessage {
     ExpiredLink= "لینک مورد نظر منقضی شده",
     InCorrectPhoneNumber= "تلفن وارد شده صحیح نمیباشد",
     InCorrectMobileNumber= "شماره موبایل وارد شده صحیح نمیباشد",
-    InCorrectTypeOffice= "نوع ملک را به درستی انتخاب کنید"
+    InCorrectTypeOffice= "نوع ملک را به درستی انتخاب کنید",
+    DontExpiredCode= "کد ارسال شده قبلی هنوز منقضی نشده"
 }
 
 export enum ForbiddenMessage {

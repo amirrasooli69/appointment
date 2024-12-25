@@ -1,5 +1,5 @@
 import {
-    BadRequestException,
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -9,7 +9,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "../user/entity/user.entity";
 import { Repository } from "typeorm";
 import {
-    ChangePasswordDto,
+  ChangePasswordDto,
   CheckOtpDto,
   ForgetPasswordDto,
   LoginDto,
@@ -19,7 +19,7 @@ import {
 } from "./dto/auth.dto";
 import { mobileValidation } from "src/common/util/mobile.util";
 import {
-    BadRequestMessage,
+  BadRequestMessage,
   ConfilictMessage,
   NotFoundMessage,
   OtpMessage,
@@ -30,14 +30,22 @@ import { hashPassword, randomPassword } from "src/common/util/password.util";
 import { isMobilePhone } from "class-validator";
 import { compareSync } from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
-import { A_JWT_SECRET, Clinic_JWT_SECRET, ForgetPassword_JWT_SECRET, R_JWT_SECRET } from "src/common/constant/jwt.const";
+import {
+  A_JWT_SECRET,
+  Clinic_JWT_SECRET,
+  ForgetPassword_JWT_SECRET,
+  R_JWT_SECRET,
+} from "src/common/constant/jwt.const";
 import { randomInt } from "crypto";
+import { ClinicEntity } from "../clinic/entity/clinic.entity";
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
+    @InjectRepository(ClinicEntity)
+    private clinicRepsitory: Repository<ClinicEntity>,
     private jwtService: JwtService
   ) {}
 
@@ -117,42 +125,47 @@ export class AuthService {
     const { mobile } = forgetPasswordDto;
     let user = await this.userRepository.findOneBy({ mobile });
     if (!user) user = await this.userRepository.findOneBy({ username: mobile });
-    if (!user) throw new UnauthorizedException(UnauthorizedMessage.IncorrectUserPass);
+    if (!user)
+      throw new UnauthorizedException(UnauthorizedMessage.IncorrectUserPass);
     const link = this.forgetPasswordLinkGenerator(user);
     return {
-        message: PublicMessage.SendLinkForgetPassword,
-        link
-    }
+      message: PublicMessage.SendLinkForgetPassword,
+      link,
+    };
   }
 
-  async changePassword(changePasswordDto: ChangePasswordDto){
-    const {confirmPassword, newPassword, token}= changePasswordDto;
+  async changePassword(changePasswordDto: ChangePasswordDto) {
+    const { confirmPassword, newPassword, token } = changePasswordDto;
     const data = this.verifyPasswordToken(token);
-    const user = await this.userRepository.findOneBy({id: data.userId});
-    if(!user) throw new NotFoundException(PublicMessage.InCorrectData)
-    if(user.last_change_password_date){
-        const lastChange = new Date(user.last_change_password_date.getTime() + 1000 * 60 * 60); 
-        if(new Date() < lastChange) throw new BadRequestException(BadRequestMessage.ChangePasswordTime)
-        }
-    if(newPassword !== confirmPassword) throw new BadRequestException(BadRequestMessage.IncorrectRepeatPassword)
+    const user = await this.userRepository.findOneBy({ id: data.userId });
+    if (!user) throw new NotFoundException(PublicMessage.InCorrectData);
+    if (user.last_change_password_date) {
+      const lastChange = new Date(
+        user.last_change_password_date.getTime() + 1000 * 60 * 60
+      );
+      if (new Date() < lastChange)
+        throw new BadRequestException(BadRequestMessage.ChangePasswordTime);
+    }
+    if (newPassword !== confirmPassword)
+      throw new BadRequestException(BadRequestMessage.IncorrectRepeatPassword);
     user.password = hashPassword(newPassword);
-    user.last_change_password_date= new Date();
+    user.last_change_password_date = new Date();
     await this.userRepository.save(user);
     return {
-        message: PublicMessage.Updated
-    }
+      message: PublicMessage.Updated,
+    };
   }
 
   forgetPasswordLinkGenerator(user: UserEntity) {
     const token = this.jwtService.sign(
-        {userId: user.id, mobile: user.mobile},
-        {secret: ForgetPassword_JWT_SECRET, expiresIn: "1m"}
+      { userId: user.id, mobile: user.mobile },
+      { secret: ForgetPassword_JWT_SECRET, expiresIn: "1m" }
     );
     const link = `http://localhost:3000/auth/changeme?token=${token}`;
     return link;
   }
 
-  async tokenGenerator(userId: number) {
+  async tokenGenerator(userId: number, isClinic: boolean= false) {
     const accessToken = this.jwtService.sign(
       { userId },
       { secret: A_JWT_SECRET, expiresIn: "1d" }
@@ -190,33 +203,55 @@ export class AuthService {
       });
       // console.log("object");
       if (verified?.userId && !isNaN(parseInt(verified?.userId))) {
-        
         return verified;
       }
 
       throw new UnauthorizedException("monghazi");
     } catch (error) {
       throw new UnauthorizedException("monghazi 2");
-      
     }
   }
 
-  verifyClinicAccessToken(token: string){
+  verifyClinicAccessToken(token: string) {
     try {
       const verified = this.jwtService.verify(token, {
-        secret: Clinic_JWT_SECRET
-      })
-      if(verified?.clinicId && !isNaN(parseInt(verified?.clinicId))){
-        return verified
+        secret: Clinic_JWT_SECRET,
+      });
+      if (verified?.clinicId && !isNaN(parseInt(verified?.clinicId))) {
+        return verified;
       }
 
       throw new UnauthorizedException(UnauthorizedMessage.LoginAgain);
-      
     } catch (error) {
       throw new UnauthorizedException(UnauthorizedMessage.LoginAgain);
-
     }
   }
+
+  async clinicLoginOtp(dto: SendOtpDto) {
+    const { mobile } = dto;
+    const clinic = await this.clinicRepsitory.findOneBy({manager_mobile: mobile});
+    if(!clinic) throw new NotFoundException(NotFoundMessage.NotFoundClinic)
+    if(clinic.otp_expires_in >= new Date()) throw new BadRequestException(BadRequestMessage.DontExpiredCode)
+    
+    const code = randomInt(10000, 99999)
+    clinic.otp_code = String(code);
+    clinic.otp_expires_in = new Date(new Date().getTime()+ 1000 * 60);
+    await this.clinicRepsitory.save(clinic);
+    return {
+      message: OtpMessage.SendOtpCode,
+      code
+    }
+  }
+
+  async clinicCheckOtp(dto: CheckOtpDto) {
+    const { mobile, code } = dto;
+    const {phoneNumber}= mobileValidation(mobile)
+    const clinic = await this.clinicRepsitory.findOneBy({manager_mobile: phoneNumber});
+    if(!clinic) throw new NotFoundException(NotFoundMessage.NotFoundClinic)
+    if(clinic.otp_expires_in < new Date()) throw new UnauthorizedException(OtpMessage.ExpiredOtpCode)
+    if(code === clinic.otp_code){
+      return this.tokenGenerator(clinic.id, true)
+    }
+    throw new UnauthorizedException(OtpMessage.InCorrectOtpCode)
+  }
 }
-
-

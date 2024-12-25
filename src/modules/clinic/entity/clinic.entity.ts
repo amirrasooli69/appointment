@@ -24,6 +24,10 @@ export class ClinicEntity {
     accepted_at: Date;
     @Column({nullable: true})
     rejected_at: Date;
+    @Column({nullable: true})
+    otp_code: string;
+    @Column({nullable: true})
+    otp_expires_in: Date;
     @Column({nullable: true, unique: true})
     detailId: number;
     @Column({nullable: true, unique: true})

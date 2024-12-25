@@ -48,4 +48,16 @@ export class AuthController {
     changePassword(@Body() changePasswordDto: ChangePasswordDto){
         return this.authService.changePassword(changePasswordDto)
     }
+
+    @Post("/clinic/send-otp")
+    @ApiConsumes(FormType.Urlencoded, FormType.Json)
+    clinicLogin(@Body() dto: SendOtpDto){
+        return this.authService.clinicLoginOtp(dto);
+    }
+
+    @Post("/clinic/check-otp")
+    @ApiConsumes(FormType.Urlencoded, FormType.Json)
+    clinicCheckOtp(@Body() dto: CheckOtpDto){
+        return this.authService.clinicCheckOtp(dto)
+    }
 }

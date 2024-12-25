@@ -237,6 +237,7 @@ export class ClinicService {
   async createDoctor(doctorDto: CreateDoctorDto, image: Express.Multer.File) {
     const { degree, experience, firstname, lastname, majors, medical_code } =
       doctorDto;
+      const {id} = this.request.clinic;
     const doctor = await this.doctorRepository.findOneBy({ medical_code });
     if (doctor) throw new ConflictException(ConfilictMessage.doctor);
     const newDoctor = this.doctorRepository.create({
@@ -246,14 +247,15 @@ export class ClinicService {
       lastname,
       majors,
       medical_code,
+      clinicId: id,
     });
     if (image) {
       const { Location } = await this.s3Service.uploadFile(
         image,
         "clinic/doctor"
       );
+      newDoctor.image = Location
     }
-    newDoctor.image = Location.toString();
 
     await this.doctorRepository.save(newDoctor);
   }
