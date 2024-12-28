@@ -44,8 +44,8 @@ export class ClinicController {
     }
 
     @Post("/create-doctor")
-    @ClinicAuth()
     @ApiConsumes(FormType.Mulipart)
+    @ClinicAuth()
     @UseInterceptors(FileInterceptor("image", {storage: memoryStorage(),}))
     createDoctor(@Body() doctorDto: CreateDoctorDto, @UploadedFile() image: Express.Multer.File){
         return this.clinicService.createDoctor(doctorDto, image)

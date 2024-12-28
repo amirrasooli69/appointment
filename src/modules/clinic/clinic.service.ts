@@ -237,7 +237,9 @@ export class ClinicService {
   async createDoctor(doctorDto: CreateDoctorDto, image: Express.Multer.File) {
     const { degree, experience, firstname, lastname, majors, medical_code } =
       doctorDto;
-      const {id} = this.request.clinic;
+      // const {id} = this.request.clinic;
+      const id= 1;
+      console.log("id ====>"+id);
     const doctor = await this.doctorRepository.findOneBy({ medical_code });
     if (doctor) throw new ConflictException(ConfilictMessage.doctor);
     const newDoctor = this.doctorRepository.create({
@@ -258,5 +260,8 @@ export class ClinicService {
     }
 
     await this.doctorRepository.save(newDoctor);
+    return {
+      message: PublicMessage.Created
+    }
   }
 }

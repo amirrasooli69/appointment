@@ -32,9 +32,10 @@ import { compareSync } from "bcrypt";
 import { JwtService } from "@nestjs/jwt";
 import {
   A_JWT_SECRET,
-  Clinic_JWT_SECRET,
+  A_JWT_SECRET_CLINIC,
   ForgetPassword_JWT_SECRET,
   R_JWT_SECRET,
+  R_JWT_SECRET_CLINIC,
 } from "src/common/constant/jwt.const";
 import { randomInt } from "crypto";
 import { ClinicEntity } from "../clinic/entity/clinic.entity";
@@ -165,16 +166,25 @@ export class AuthService {
     return link;
   }
 
-  async tokenGenerator(userId: number, isClinic: boolean= false) {
-    const accessToken = this.jwtService.sign(
-      { userId },
-      { secret: A_JWT_SECRET, expiresIn: "1d" }
-    );
-    const refreshToken = this.jwtService.sign(
-      { userId },
-      { secret: R_JWT_SECRET, expiresIn: "30d" }
-    );
 
+  async tokenGenerator(id: number, isClinic: boolean = false) {
+    let AccessTokenSecret = A_JWT_SECRET;
+    let RefreshTokenSecret = R_JWT_SECRET;
+    let params = {userId: id};
+    if (isClinic) {
+      //@ts-ignore
+      params = {clinicId: id};
+      AccessTokenSecret = A_JWT_SECRET_CLINIC;
+      RefreshTokenSecret = R_JWT_SECRET_CLINIC;
+    }
+    const accessToken = this.jwtService.sign(params, {
+      secret: AccessTokenSecret,
+      expiresIn: "1d",
+    });
+    const refreshToken = this.jwtService.sign(params, {
+      secret: RefreshTokenSecret,
+      expiresIn: "30d",
+    });
     return {
       accessToken,
       refreshToken,
@@ -213,18 +223,19 @@ export class AuthService {
   }
 
   verifyClinicAccessToken(token: string) {
-    try {
+    // try {
+      console.log("token =====> "+ token);
       const verified = this.jwtService.verify(token, {
-        secret: Clinic_JWT_SECRET,
+        secret: A_JWT_SECRET_CLINIC,
       });
-      if (verified?.clinicId && !isNaN(parseInt(verified?.clinicId))) {
-        return verified;
-      }
 
-      throw new UnauthorizedException(UnauthorizedMessage.LoginAgain);
-    } catch (error) {
-      throw new UnauthorizedException(UnauthorizedMessage.LoginAgain);
-    }
+      // if (verified?.clinicId && !isNaN(parseInt(verified.clinicId)))
+      //   return verified?.clinicId;
+
+    //   throw new UnauthorizedException(UnauthorizedMessage.LoginAgain);
+    // } catch (error) {
+    //   throw new UnauthorizedException(UnauthorizedMessage.LoginAgain);
+    // }
   }
 
   async clinicLoginOtp(dto: SendOtpDto) {
