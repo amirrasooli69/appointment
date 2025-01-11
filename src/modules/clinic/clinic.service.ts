@@ -42,7 +42,7 @@ import { CreateDoctorDto } from "./dto/doctor.dto";
 import { REQUEST } from "@nestjs/core";
 import { Request } from "express";
 
-@Injectable({scope: Scope.REQUEST})
+@Injectable({ scope: Scope.REQUEST })
 export class ClinicService {
   constructor(
     @InjectRepository(ClinicEntity)
@@ -237,9 +237,7 @@ export class ClinicService {
   async createDoctor(doctorDto: CreateDoctorDto, image: Express.Multer.File) {
     const { degree, experience, firstname, lastname, majors, medical_code } =
       doctorDto;
-      // const {id} = this.request.clinic;
-      const id= 1;
-      console.log("id ====>"+id);
+    const { id } = this.request.clinic;
     const doctor = await this.doctorRepository.findOneBy({ medical_code });
     if (doctor) throw new ConflictException(ConfilictMessage.doctor);
     const newDoctor = this.doctorRepository.create({
@@ -256,12 +254,12 @@ export class ClinicService {
         image,
         "clinic/doctor"
       );
-      newDoctor.image = Location
+      newDoctor.image = Location;
     }
 
     await this.doctorRepository.save(newDoctor);
     return {
-      message: PublicMessage.Created
-    }
+      message: PublicMessage.Created,
+    };
   }
 }

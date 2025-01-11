@@ -9,18 +9,23 @@ import { ClinicController } from "./clinic.controller";
 import { CategoryService } from "../category/category.service";
 import { CategoryEntity } from "../category/entity/category.entity";
 import { S3Service } from "../s3/s3.service";
+import { AuthService } from "../auth/auth.service";
+import { UserModule } from "../user/user.module";
+import { JwtService } from "@nestjs/jwt";
 
 @Module({
-  imports: [
+  imports: [ UserModule,
     TypeOrmModule.forFeature([
       ClinicEntity,
       ClinicDocumentEntity,
       ClinicDoctorEntity,
       ClinicDetailEntity,
-      CategoryEntity
+      CategoryEntity,
+
+      
     ]),
   ],
   controllers: [ClinicController],
-  providers: [ClinicService, CategoryService, S3Service],
+  providers: [ClinicService, CategoryService, S3Service, AuthService, JwtService],
 })
 export class ClinicModule {}

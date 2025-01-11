@@ -223,19 +223,18 @@ export class AuthService {
   }
 
   verifyClinicAccessToken(token: string) {
-    // try {
-      console.log("token =====> "+ token);
+    try {
       const verified = this.jwtService.verify(token, {
         secret: A_JWT_SECRET_CLINIC,
       });
 
-      // if (verified?.clinicId && !isNaN(parseInt(verified.clinicId)))
-      //   return verified?.clinicId;
+      if (verified?.clinicId && !isNaN(parseInt(verified.clinicId)))
+        return verified?.clinicId;
 
-    //   throw new UnauthorizedException(UnauthorizedMessage.LoginAgain);
-    // } catch (error) {
-    //   throw new UnauthorizedException(UnauthorizedMessage.LoginAgain);
-    // }
+      throw new UnauthorizedException(UnauthorizedMessage.LoginAgain);
+    } catch (error) {
+      throw new UnauthorizedException(UnauthorizedMessage.LoginAgain);
+    }
   }
 
   async clinicLoginOtp(dto: SendOtpDto) {
