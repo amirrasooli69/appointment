@@ -3,3 +3,10 @@ export enum ClinicStatus {
     Confirmed = "confirmed",
     Rejected= "rejected"
 }
+
+export enum DoctorStatus {
+    DayOff= "day-off",
+    Available= "available",
+    Vaction= "vaction"
+
+}

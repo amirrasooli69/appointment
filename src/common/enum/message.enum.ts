@@ -11,7 +11,8 @@ export enum InCorrectFormat {
 export enum ConfilictMessage {
     mobile= "این شماره موبایل تکراری است",
     telephone= "این شماره تلفن تکراری است",
-    doctor= "کد نظام پزشکی تکراری میباشد"
+    doctor= "کد نظام پزشکی تکراری میباشد",
+    schedouleDoctor= "این روز قبلا برای این دکتر رزرو شده است"
 }
 
 export enum PublicMessage {

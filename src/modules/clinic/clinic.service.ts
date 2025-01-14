@@ -41,6 +41,8 @@ import { ClinicFilterDto } from "./dto/filter.dto";
 import { CreateDoctorDto } from "./dto/doctor.dto";
 import { REQUEST } from "@nestjs/core";
 import { Request } from "express";
+import { ScheduleDto } from "./dto/schedule.dto";
+import { DoctorScheduleEntity } from "./entity/schedule.entity";
 
 @Injectable({ scope: Scope.REQUEST })
 export class ClinicService {
@@ -53,6 +55,7 @@ export class ClinicService {
     private doctorRepository: Repository<ClinicDoctorEntity>,
     @InjectRepository(ClinicDocumentEntity)
     private documentRepository: Repository<ClinicDocumentEntity>,
+    @InjectRepository(DoctorScheduleEntity) private doctorScheduleRepository: Repository<DoctorScheduleEntity>,
     private categoryService: CategoryService,
     private s3Service: S3Service,
     @Inject(REQUEST) private request: Request
@@ -261,5 +264,27 @@ export class ClinicService {
     return {
       message: PublicMessage.Created,
     };
+  }
+
+  async addSchedule(scheduleDto: ScheduleDto){
+    const {day, doctorId, end_time, start_time, status}= scheduleDto;
+    const doctor = await this.doctorRepository.findOneBy({id: doctorId})
+    if(!doctor) throw new NotFoundException(NotFoundMessage.NotFound);
+    const schedoleDoctor = await this.doctorScheduleRepository.findOneBy({doctorId, day});
+    if(schedoleDoctor) throw new ConflictException(ConfilictMessage.schedouleDoctor)
+    await this.doctorScheduleRepository.insert({
+      doctorId,
+      day,
+      end_time,
+      start_time,
+      status,
+    })
+    return {
+      message: PublicMessage.Created
+    }
+  }
+
+  async getSchedule(doctorId: number){
+    return this.doctorScheduleRepository.findOneBy({doctorId})
   }
 }

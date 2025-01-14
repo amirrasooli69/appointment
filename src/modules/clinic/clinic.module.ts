@@ -12,6 +12,7 @@ import { S3Service } from "../s3/s3.service";
 import { AuthService } from "../auth/auth.service";
 import { UserModule } from "../user/user.module";
 import { JwtService } from "@nestjs/jwt";
+import { DoctorScheduleEntity } from "./entity/schedule.entity";
 
 @Module({
   imports: [ UserModule,
@@ -21,7 +22,7 @@ import { JwtService } from "@nestjs/jwt";
       ClinicDoctorEntity,
       ClinicDetailEntity,
       CategoryEntity,
-
+      DoctorScheduleEntity
       
     ]),
   ],

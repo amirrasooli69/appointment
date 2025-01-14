@@ -12,6 +12,7 @@ import { ClinicFilterDto } from "./dto/filter.dto";
 import { RejectDto } from "./dto/reject.dto";
 import { ClinicAuth } from "./decorators/clinic.decoretor";
 import { CreateDoctorDto } from "./dto/doctor.dto";
+import { ScheduleDto } from "./dto/schedule.dto";
 
 @Controller("clinic")
 @ApiTags("clinic")
@@ -50,4 +51,19 @@ export class ClinicController {
     createDoctor(@Body() doctorDto: CreateDoctorDto, @UploadedFile() image: Express.Multer.File){
         return this.clinicService.createDoctor(doctorDto, image)
     }
+
+    @Post("/create-doctor-schedule")
+    @ApiConsumes(FormType.Json, FormType.Urlencoded)
+    @ClinicAuth()
+    addSchedule(@Body() scheduleDto: ScheduleDto){
+        return this.clinicService.addSchedule(scheduleDto)
+    }
+
+    @Get("/doctor-schedule/:doctorId")
+    @ApiConsumes(FormType.Json, FormType.Urlencoded)
+    @ClinicAuth()
+    getSchedule(@Param("doctorId", ParseIntPipe) doctorId: number){
+        return this.clinicService.getSchedule(doctorId)
+    }
+    
 }
